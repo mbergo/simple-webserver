@@ -43,22 +43,22 @@ void logger(int type, char *ret1, char *ret2, int socket)
 			break;
 		case FORBIDDEN:
 			(void)write(socket, "HTTP/1.1 Forbidden\nContent-Length: 190\nConnection: close\nContent-Type: text/html\n\n
-				<html><head>\n<title>403 Forbidden</title>\n</head><body>\n<h1>Forbidden</h1>\nThe requested URL, file type
-					or operation is not allowed on this simple static file webserver.\n</body></html>\n",271);
-			(void)sprintf(logbuffer,"FORBIDDEN: %s:%s",ret1, ret2);
+				<html><head>\n<title>403 Forbidden</title>\n</head><body>\n<h1>Forbidden</h1>\n",171);
+			(void)sprintf(buffer,"FORBIDDEN: %s:%s",ret1, ret2);
 			break;
 		case NOTFOUND:
 			(void)write(socket_fd, "HTTP/1.1 404 Not Found\nContent-Length: 136\nConnection: close\n
-				Content-Type: text/html\n\n<html><head>\n<title>404 Not Found</title>\n</head><body>\n
-					<h1>Not Found</h1>\nThe requested URL was not found on this server.\n</body></html>\n",224);
-			(void)sprintf(logbuffer,"NOT FOUND: %s:%s",ret1, ret2);
+				Content-Type: text/html\n\n<html><head>\n<title>404 Not Found</title>\n",140);
+			(void)sprintf(buffer,"NOT FOUND: %s:%s",ret1, ret2);
 			break;
 		case LOG:
-			(void)sprintf(buffer," INFO: %s:%s:%d",ret1, ret2,socket);
+			(void)sprintf(buffer," INFO: %s:%s:%d",ret1, ret2, socket);
 			break;
 	}
-		if((fd = open("nweb.log", O_CREAT| O_WRONLY | O_APPEND,0644)) >= 0) {
-			(void)write(fd,logbuffer,strlen(logbuffer));
+
+	  // Errors verification ?
+		if((fd = open("web.log", O_CREAT| O_WRONLY | O_APPEND,0644)) >= 0) {
+			(void)write(fd,buffer,strlen(buffer));
 			(void)write(fd,"\n",1);
 			(void)close(fd);
 		}
