@@ -32,8 +32,14 @@ struct {
 	{"html","text/html" },
 	{0,0} };
 
-void logger()
+void logger(int type, char *ret1, char *ret2, int socket)
 {
+	int fd;
+	char buffer[BUFSIZE*2]; // Say no to overflow
+
+	switch (type) {
+		case ERROR: (void)sprintf(buffer, "ERROR: %s:%s Errno=%d exiting pid=%d", ret1, ret2, errno.getpid());
+	}
 	// Logger function
 }
 
@@ -47,4 +53,6 @@ void web()
 int main()
 {
 // Here we run
+
+
 }
