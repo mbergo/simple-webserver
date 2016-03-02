@@ -80,7 +80,7 @@ void web(int fd, int hit)
 	if ( ret == 0 || ret == -1) {
 		logger(FORBIDDEN, "Failed to read browser request", "", fd);
 	}
-	if ( ret > 0 ) {
+	if ( ret > 0  && ret < BUFSIZE) {
 		buffer[ret] = 0;
 	} else {
 		buffer[0] = 0;
@@ -94,7 +94,7 @@ void web(int fd, int hit)
 	logger(LOG, "request", buffer, hit);
 
 	/* Methods */
-	if ( strncmp( buffer, "GET", 4) && strncmp( buffer, "get", 4) ) {
+	if ( strncmp( buffer, "GET", 4) && strncmp( buffer, "get", 4) ) { // Smart and dumb han?!
 		logger(FORBIDDEN, "Only GET permited", buffer, fd);
 	}
 	exit(1);
