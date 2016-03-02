@@ -104,6 +104,13 @@ void web(int fd, int hit)
 			break;
 		}
 	}
+
+	for (y = 0; y < x-1; y++) {
+		if (buffer[y] == '.' && buffer[y+1] == '.' ) {
+			logger(FORBIDDEN, "Access denied", buffer, fd);
+		}
+		
+	}
 	exit(1);
 }
 
