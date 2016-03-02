@@ -76,6 +76,27 @@ void web(int fd, int hit)
 	static char buffer[BUFSIZE+1]; // Zero filled memory
 
 	ret = read(fd,buffer,BUFSIZE); // Read the request
+
+	if ( ret == 0 || ret == -1) {
+		logger(FORBIDDEN, "Failed to read browser request", "", fd);
+	}
+	if ( ret > 0 ) {
+		buffer[ret] = 0;
+	} else {
+		buffer[0] = 0;
+	}
+
+	for (x = 0; x < ret; x++) {
+		if (buffer[x] == '\r' || buffer[x] == '\n') {
+			buffer[x] = '#';
+		}
+	}
+	logger(LOG, "request", buffer, hit);
+
+	/* Methods */
+	if ( strncmp( buffer, "GET", 4) && strncmp( buffer, "get", 4) ) {
+		logger(FORBIDDEN, "Only GET permited", buffer, fd);
+	}
 	exit(1);
 }
 
