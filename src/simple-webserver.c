@@ -109,7 +109,10 @@ void web(int fd, int hit)
 		if (buffer[y] == '.' && buffer[y+1] == '.' ) {
 			logger(FORBIDDEN, "Access denied", buffer, fd);
 		}
-		
+	}
+
+	if( !strncmp(&buffer[0],"GET /\0",6) || !strncmp(&buffer[0],"get /\0",6) ) { // convert filename to index file
+			(void)strcpy(buffer,"GET /index.html");
 	}
 	exit(1);
 }
