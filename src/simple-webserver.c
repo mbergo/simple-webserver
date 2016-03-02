@@ -32,6 +32,7 @@ struct {
 	{"html","text/html" },
 	{0,0} };
 
+/* Log requests and quits */
 void logger(int type, char *ret1, char *ret2, int socket)
 {
 	int fd;
@@ -64,18 +65,21 @@ void logger(int type, char *ret1, char *ret2, int socket)
 		}
 
 		if(type == ERROR || type == NOTFOUND || type == FORBIDDEN) exit(3);
-	}
+}
 
-// Lets spawn a subprocess to quit on errors
-void web()
+/* Lets spawn a subprocess to quit on errors */
+void web(int fd, int hit)
 {
-	// Main web function here
+	int x, file_fd, buflen;
+	long y, ret, len;
+	char *fstr;
+	static char buffer[BUFSIZE+1]; // Zero filled memory
+
+	ret = read(fd,buffer,BUFSIZE); // Read the request
 	exit(1);
 }
 
 int main()
 {
 // Here we run
-
-
 }
