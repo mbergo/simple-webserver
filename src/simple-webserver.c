@@ -97,6 +97,13 @@ void web(int fd, int hit)
 	if ( strncmp( buffer, "GET", 4) && strncmp( buffer, "get", 4) ) { // Smart and dumb han?!
 		logger(FORBIDDEN, "Only GET permited", buffer, fd);
 	}
+
+	for (x = 4; x < BUFSIZE; x++) {
+		if ( buffer[x] == ' ' ) {
+			buffer[x] = 0;
+			break;
+		}
+	}
 	exit(1);
 }
 
