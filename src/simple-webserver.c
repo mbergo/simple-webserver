@@ -43,13 +43,11 @@ void logger(int type, char *ret1, char *ret2, int socket)
 			(void)sprintf(buffer, "ERROR: %s:%s Errno=%d exiting pid=%d", ret1, ret2, errno);
 			break;
 		case FORBIDDEN:
-			(void)write(socket, "HTTP/1.1 Forbidden\nContent-Length: 190\nConnection: close\nContent-Type: text/html\n\n
-				<html><head>\n<title>403 Forbidden</title>\n</head><body>\n<h1>Forbidden</h1>\n",171);
+			(void)write(socket, "HTTP/1.1 Forbidden\nContent-Length: 190\nConnection: close\nContent-Type: text/html\n\n<html><head>\n<title>403 Forbidden</title>\n</head><body>\n<h1>Forbidden</h1>\n",171);
 			(void)sprintf(buffer,"FORBIDDEN: %s:%s",ret1, ret2);
 			break;
 		case NOTFOUND:
-			(void)write(socket_fd, "HTTP/1.1 404 Not Found\nContent-Length: 136\nConnection: close\n
-				Content-Type: text/html\n\n<html><head>\n<title>404 Not Found</title>\n",140);
+			(void)write(socket_fd, "HTTP/1.1 404 Not Found\nContent-Length: 136\nConnection: close\nContent-Type: text/html\n\n<html><head>\n<title>404 Not Found</title>\n",140);
 			(void)sprintf(buffer,"NOT FOUND: %s:%s",ret1, ret2);
 			break;
 		case LOG:
@@ -68,8 +66,7 @@ void logger(int type, char *ret1, char *ret2, int socket)
 }
 
 // Lets spawn a subprocess to quit on errors
-void web(int fd, int hit)
-{
+void web(int fd, int hit) {
 	int x, file_fd, buflen;
 	long y, ret, len;
 	char *fstr;
@@ -148,8 +145,7 @@ void web(int fd, int hit)
 	exit(1);
 }
 
-int main()
-{
+int main() {
 	int i, port, pid, listenfd, socketfd, hit;
 	socklen_t length;
 	static struct sockaddr_in cli_addr;
