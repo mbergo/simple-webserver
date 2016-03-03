@@ -125,6 +125,19 @@ void web(int fd, int hit)
 		}
 	}
 
+	if(fstr == 0) logger(FORBIDDEN,"file extension type not supported",buffer,fd);
+
+	if(( file_fd = open(&buffer[5],O_RDONLY)) == -1) {  // open the file for reading
+		logger(NOTFOUND, "failed to open file",&buffer[5],fd); //
+	}
+
+	logger(LOG,"SEND",&buffer[5],hit);
+	len = (long)lseek(file_fd, (off_t)0, SEEK_END); // Size of the file
+	      (void)lseek(file_fd, (off_t)0, SEEK_SET); // Move back the seek to read the file
+        (void)sprintf(buffer,"HTTP/1.1 200 OK\nServer: SimpleWebserver/%d.0\nContent-Length: %ld\nConnection: close\nContent-Type: %s\n\n", VERSION, len, fstr); // Header
+	logger(LOG,"Header",buffer,hit);
+	(void)write(fd,buffer,strlen(buffer));
+
 	exit(1);
 }
 
