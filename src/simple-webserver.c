@@ -120,11 +120,11 @@ void web(int fd, int hit)
 	for(x = 0; extensions[x].ext != 0; x++) {
 		len = strlen(extensions[x].ext);
 		if( !strncmp(&buffer[buflen], extensions[x].ext, len) ) {
-			fstr =extensions[i].filetype;
+			fstr = extensions[x].filetype;
 			break;
 		}
 	}
-	
+
 	exit(1);
 }
 
