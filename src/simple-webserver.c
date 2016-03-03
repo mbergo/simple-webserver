@@ -9,7 +9,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#define VERSION 23
+#define VERSION 28
 #define BUFSIZE 8096
 #define ERROR      42
 #define LOG        44
