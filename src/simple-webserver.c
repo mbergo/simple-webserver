@@ -114,6 +114,17 @@ void web(int fd, int hit)
 	if( !strncmp(&buffer[0],"GET /\0",6) || !strncmp(&buffer[0],"get /\0",6) ) { // convert filename to index file
 			(void)strcpy(buffer,"GET /index.html");
 	}
+
+	buflen = strlen(buffer);
+	fstr = (char *)0; // why not? :)
+	for(x = 0; extensions[x].ext != 0; x++) {
+		len = strlen(extensions[x].ext);
+		if( !strncmp(&buffer[buflen], extensions[x].ext, len) ) {
+			fstr =extensions[i].filetype;
+			break;
+		}
+	}
+	
 	exit(1);
 }
 
