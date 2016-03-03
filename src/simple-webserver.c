@@ -32,7 +32,7 @@ struct {
 	{"html","text/html" },
 	{0,0} };
 
-/* Log requests and quits */
+// Log requests and quits
 void logger(int type, char *ret1, char *ret2, int socket)
 {
 	int fd;
@@ -40,7 +40,7 @@ void logger(int type, char *ret1, char *ret2, int socket)
 
 	switch (type) {
 		case ERROR:
-			(void)sprintf(buffer, "ERROR: %s:%s Errno=%d exiting pid=%d", ret1, ret2, errno.getpid());
+			(void)sprintf(buffer, "ERROR: %s:%s Errno=%d exiting pid=%d", ret1, ret2, errno);
 			break;
 		case FORBIDDEN:
 			(void)write(socket, "HTTP/1.1 Forbidden\nContent-Length: 190\nConnection: close\nContent-Type: text/html\n\n
@@ -67,7 +67,7 @@ void logger(int type, char *ret1, char *ret2, int socket)
 		if(type == ERROR || type == NOTFOUND || type == FORBIDDEN) exit(3);
 }
 
-/* Lets spawn a subprocess to quit on errors */
+// Lets spawn a subprocess to quit on errors
 void web(int fd, int hit)
 {
 	int x, file_fd, buflen;
@@ -93,7 +93,7 @@ void web(int fd, int hit)
 	}
 	logger(LOG, "request", buffer, hit);
 
-	/* Methods */
+	// Methods
 	if ( strncmp( buffer, "GET", 4) && strncmp( buffer, "get", 4) ) { // Smart and dumb han?!
 		logger(FORBIDDEN, "Only GET permited", buffer, fd);
 	}
@@ -150,7 +150,10 @@ void web(int fd, int hit)
 
 int main()
 {
-	int i;
+	int i, port, pid, listenfd, socketfd, hit;
+	socklen_t length;
+	static struct sockaddr_in cli_addr;
+	static struct sockaddr_in serv_addr;
 
 	if( argc < 3  || argc > 3 || !strcmp(argv[1], "-?") ) {
 		(void)printf("Usage: ./simple-webserver <port> [dir]\t\tversion %d\n\n", VERSION);
@@ -164,5 +167,55 @@ int main()
 		(void)printf("ERROR: Can't Change to directory %s\n",argv[2]);
 		exit(4);
 	}
-	
+
+	if(fork() != 0) {
+		return 0; // parent returns OK to shell
+	}
+	(void)signal(SIGCLD, SIG_IGN); // ignore child death
+	(void)signal(SIGHUP, SIG_IGN); // ignore terminal hangups
+
+	for(i=0;i<32;i++) {
+		(void)close(i);
+	}	// close open files
+
+	(void)setpgrp();		// break away from process group
+	logger(LOG,"server is starting",argv[1],getpid());
+
+	// setup the network socket
+	if((listenfd = socket(AF_INET, SOCK_STREAM,0)) <0) {
+		logger(ERROR, "system call","socket",0);
+	}
+
+	port = atoi(argv[1]);
+	if(port < 0 || port > 65536) {
+		logger(ERROR,"Invalid port number (try 1-> 65536)",argv[1],0);
+	}
+
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	serv_addr.sin_port = htons(port);
+
+	if(bind(listenfd, (struct sockaddr *)&serv_addr,sizeof(serv_addr)) < 0) {
+		logger(ERROR, "system call", "bind", 0);
+	}
+
+	if( listen(listenfd,64) < 0) {
+		logger(ERROR,"system call", "listen", 0);
+	}
+
+	for(hit=1; ;hit++) {
+		length = sizeof(cli_addr);
+		if((socketfd = accept(listenfd, (struct sockaddr *)&cli_addr, &length)) < 0)
+			logger(ERROR, "system call", "accept", 0);
+		if((pid = fork()) < 0) {
+			logger(ERROR, "system call", "fork", 0);
+		} else {
+			if(pid == 0) { 	// child
+				(void)close(listenfd);
+				web(socketfd,hit); // never returns
+			} else { 	// parent
+				(void)close(socketfd);
+			}
+		}
+	}
 }
