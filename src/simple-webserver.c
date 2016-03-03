@@ -159,5 +159,10 @@ int main()
 		}
 		exit(0);
 	}
+
+	if(chdir(argv[2]) == -1){
+		(void)printf("ERROR: Can't Change to directory %s\n",argv[2]);
+		exit(4);
+	}
 	
 }
