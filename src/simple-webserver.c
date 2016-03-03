@@ -150,5 +150,14 @@ void web(int fd, int hit)
 
 int main()
 {
-// Here we run
+	int i;
+
+	if( argc < 3  || argc > 3 || !strcmp(argv[1], "-?") ) {
+		(void)printf("Usage: ./simple-webserver <port> [dir]\t\tversion %d\n\n", VERSION);
+		for(i=0;extensions[i].ext != 0;i++) {
+			(void)printf(" %s",extensions[i].ext);
+		}
+		exit(0);
+	}
+	
 }
