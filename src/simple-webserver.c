@@ -138,6 +138,13 @@ void web(int fd, int hit)
 	logger(LOG,"Header",buffer,hit);
 	(void)write(fd,buffer,strlen(buffer));
 
+	while (	(ret = read(file_fd, buffer, BUFSIZE)) > 0 ) {
+		(void)write(fd,buffer,ret);
+	}
+
+	sleep(1);	// Back in the day, we need to "flush" the socket buffer
+	close(fd);
+
 	exit(1);
 }
 
